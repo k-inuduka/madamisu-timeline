@@ -461,6 +461,24 @@ textarea {
   margin-bottom: 0;
 }
 
+.export-memo {
+  margin-top: 16px;
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+}
+
+.export-memo h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.export-memo p {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 560px) {
   .app {
     padding: 12px;

@@ -360,6 +360,37 @@ function drawRoundRect(ctx, x, y, width, height, radius) {
   ctx.closePath()
 }
 
+function wrapCanvasText(ctx, text, maxWidth) {
+  const lines = []
+
+  String(text)
+    .split(/\r?\n/)
+    .forEach((paragraph) => {
+      if (!paragraph) {
+        lines.push('')
+        return
+      }
+
+      let line = ''
+
+      Array.from(paragraph).forEach((char) => {
+        const nextLine = line + char
+
+        if (line && ctx.measureText(nextLine).width > maxWidth) {
+          lines.push(line)
+          line = char
+          return
+        }
+
+        line = nextLine
+      })
+
+      lines.push(line)
+    })
+
+  return lines
+}
+
 function TimelineView({ rows, characters, timeline, ticks, timelineWidth, onActionClick }) {
   return (
     <section className="timeline-wrap" aria-label="タイムライン">
@@ -702,12 +733,21 @@ function App() {
     const titleHeight = 44
     const axisHeight = 36
     const width = Math.ceil(nameWidth + timelineWidth + rightPadding)
-    const height = Math.ceil(
-      titleHeight + axisHeight + rows.reduce((total, row) => total + row.rowHeight, 0) + 16,
-    )
-    const scale = Math.min(window.devicePixelRatio || 1, 2)
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
+    const memoText = timelineMemo.trim()
+    const memoLineHeight = 19
+    ctx.font = '13px system-ui, sans-serif'
+    const memoLines = memoText ? wrapCanvasText(ctx, memoText, width - 32) : []
+    const memoHeight = memoLines.length > 0 ? 44 + memoLines.length * memoLineHeight : 0
+    const height = Math.ceil(
+      titleHeight +
+        axisHeight +
+        rows.reduce((total, row) => total + row.rowHeight, 0) +
+        16 +
+        memoHeight,
+    )
+    const scale = Math.min(window.devicePixelRatio || 1, 2)
 
     canvas.width = width * scale
     canvas.height = height * scale
@@ -809,6 +849,21 @@ function App() {
 
       y += rowHeight
     })
+
+    if (memoLines.length > 0) {
+      const memoY = y + 22
+
+      ctx.fillStyle = '#222222'
+      ctx.textAlign = 'left'
+      ctx.font = '700 14px system-ui, sans-serif'
+      ctx.fillText('メモ', 16, memoY)
+
+      ctx.fillStyle = '#444444'
+      ctx.font = '13px system-ui, sans-serif'
+      memoLines.forEach((line, lineIndex) => {
+        ctx.fillText(line, 16, memoY + 22 + lineIndex * memoLineHeight)
+      })
+    }
 
     return new Promise((resolve, reject) => {
       canvas.toBlob((blob) => {
@@ -1163,6 +1218,12 @@ function App() {
           timelineWidth={timelineWidth}
           onActionClick={openActionDetails}
         />
+        {timelineMemo.trim() && (
+          <section className="export-memo">
+            <h2>メモ</h2>
+            <p>{timelineMemo}</p>
+          </section>
+        )}
         <ActionDetailModal
           selectedActionDetails={selectedActionDetails}
           onClose={() => setSelectedActionInfo(null)}
