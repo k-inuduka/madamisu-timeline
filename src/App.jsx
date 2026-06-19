@@ -217,7 +217,7 @@ function TimelineView({ rows, characters, timeline, ticks, timelineWidth }) {
 function App() {
   const [hashState] = useState(readHashState)
   const [characters, setCharacters] = useState(hashState.characters || initialCharacters)
-  const [isExportMode] = useState(hashState.isExportMode)
+  const [isExportMode, setIsExportMode] = useState(hashState.isExportMode)
   const [newName, setNewName] = useState('')
   const [drafts, setDrafts] = useState({})
   const [pendingDelete, setPendingDelete] = useState(null)
@@ -271,7 +271,6 @@ function App() {
       if (navigator.share) {
         await navigator.share({
           title: '行動タイムライン',
-          text: 'マーダーミステリー用の行動タイムラインです。',
           url,
         })
         return
@@ -295,7 +294,8 @@ function App() {
   }
 
   const openEditPage = () => {
-    window.location.href = buildUrl(false)
+    window.history.replaceState(null, '', buildUrl(false))
+    setIsExportMode(false)
   }
 
   const createImageBlob = () => {
