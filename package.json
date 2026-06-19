@@ -5,9 +5,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vite": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "vite": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.2"
+  }
 }
