@@ -11,7 +11,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -29,11 +30,16 @@ button:disabled {
 }
 
 input,
-select {
+select,
+textarea {
   min-width: 0;
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 10px;
+}
+
+textarea {
+  resize: vertical;
 }
 
 .app {
@@ -117,12 +123,12 @@ select {
 }
 
 .name-line {
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 88px auto;
   margin-bottom: 8px;
 }
 
 .action-line {
-  grid-template-columns: 112px 72px minmax(120px, 1fr) 88px auto;
+  grid-template-columns: 112px 112px minmax(100px, 1fr) minmax(100px, 1fr) auto auto;
 }
 
 .danger {
@@ -141,11 +147,61 @@ select {
   margin-top: 8px;
 }
 
-.action-chip {
+.witness-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.witness-label {
+  color: #555;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.witness-pill {
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  background: #fff;
+  color: #333;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.witness-pill.is-selected {
+  color: #fff;
+}
+
+.action-chip-group {
+  display: inline-flex;
+  overflow: hidden;
+  border-radius: 6px;
   background: #2f343a;
   color: #fff;
+}
+
+.action-chip-witnessed {
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 55%);
+}
+
+.action-chip,
+.action-delete {
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
   padding: 6px 8px;
   font-size: 12px;
+}
+
+.action-chip {
+  text-align: left;
+}
+
+.action-delete {
+  border-left: 1px solid rgb(255 255 255 / 35%);
+  padding-inline: 9px;
 }
 
 .timeline-wrap {
@@ -153,6 +209,7 @@ select {
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #fff;
+  margin-bottom: 16px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -191,11 +248,27 @@ select {
   z-index: 1;
   display: flex;
   align-items: center;
+  gap: 6px;
   overflow: hidden;
   background: #fff;
   padding: 0 10px;
   font-weight: 700;
   white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.row-color-dot {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 22%);
+}
+
+.row-name-text {
+  min-width: 0;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -226,16 +299,41 @@ select {
   top: 12px;
   display: flex;
   align-items: center;
+  gap: 5px;
   height: 28px;
   overflow: hidden;
   border-radius: 6px;
+  border: 0;
   background: #36a269;
   color: #fff;
   padding: 0 8px;
-  pointer-events: none;
+  cursor: pointer;
   text-align: left;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.bar-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-witness-dots {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 3px;
+}
+
+.bar-witness-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid #fff;
+  border-radius: 999px;
+}
+
+.bar-witnessed {
+  box-shadow: inset 0 0 0 3px rgb(0 0 0 / 55%);
 }
 
 .empty {
@@ -277,6 +375,76 @@ select {
   gap: 8px;
 }
 
+.detail-modal {
+  width: min(100%, 420px);
+}
+
+.detail-list {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.detail-list div {
+  display: grid;
+  gap: 3px;
+}
+
+.detail-list dt {
+  color: #666;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.detail-list dd {
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.detail-witnesses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.detail-witness {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+.detail-witness-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.single-action {
+  grid-template-columns: 1fr;
+}
+
+.timeline-memo-modal {
+  width: min(100%, 520px);
+}
+
+.timeline-memo-input {
+  width: 100%;
+  min-height: 220px;
+  line-height: 1.5;
+}
+
+.memo-count {
+  margin: 6px 0 12px;
+  color: #666;
+  font-size: 12px;
+  text-align: right;
+}
+
 .export-page {
   width: min(100%, 960px);
 }
@@ -290,6 +458,7 @@ select {
 
 .export-page .timeline-wrap {
   background: #fff;
+  margin-bottom: 0;
 }
 
 @media (max-width: 560px) {
@@ -306,12 +475,20 @@ select {
   }
 
   .action-line {
-    grid-template-columns: 1fr 80px;
+    grid-template-columns: 1fr 1fr;
   }
 
-  .action-line input:nth-child(3),
-  .action-line select,
+  .action-line .place-input,
+  .action-line .memo-input,
   .action-line button {
+    grid-column: span 2;
+  }
+
+  .name-line {
+    grid-template-columns: 1fr 88px;
+  }
+
+  .name-line .danger {
     grid-column: span 2;
   }
 
